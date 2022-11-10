@@ -1,2 +1,23 @@
-# mfe-sub-app
-基于qiankun改造的微前端vue3子应用
+# sub-app-ts
+
+## Project setup
+
+```
+pnpm install
+```
+
+### Compiles and hot-reloads for development
+
+```
+pnpm run serve
+```
+
+### Compiles and minifies for production
+
+```
+pnpm run build
+```
+
+### Customize configuration
+
+See [Configuration Reference](https://cli.vuejs.org/config/).
