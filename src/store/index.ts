@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-
+import app from './modules/app'
 // 为 store state 声明类型
 export interface State {
   formListItem: any[]
@@ -36,5 +36,7 @@ export default createStore<State>({
     }
   },
   actions: {},
-  modules: {}
+  modules: {
+    app
+  }
 })
