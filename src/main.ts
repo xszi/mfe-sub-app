@@ -1,49 +1,49 @@
 import './public-path.ts'
-import { createApp } from 'vue'
-import { createRouter, createWebHashHistory } from 'vue-router'
-
+import { createApp, Directive } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-
-
 import App from './App.vue'
-import './registerServiceWorker'
-import routes from './router'
 import store from './store'
-import plugins from './plugins'
-import actions from '@/shared/actions'
+import router from './router'
+// import { loadAllPlugins } from './plugins'
+import '@/styles/index.scss'
+import 'normalize.css'
+import * as directives from '@/directives'
+import '@/router/permission'
+import loadSvg from '@/icons'
 
-let router: any = null
+// let router: any = null
 let instance: any = null
 
 function render(props: any = {}) {
   instance = createApp(App)
+  // // 加载所有插件
+  // loadAllPlugins(instance)
+  // 加载全局 SVG
+  loadSvg(instance)
+  // 自定义指令
+  Object.keys(directives).forEach((key) => {
+    instance.directive(key, (directives as { [key: string]: Directive })[key])
+  })
   let container: any = null
   if (props) {
     // 注入 actions 实例
-    actions.setActions(props);
-    container = props.container;
+    container = props.container
     instance.config.globalProperties.parRouter = props.parRouter
     // const { proxy } = getCurrentInstance();
   }
-  router = createRouter({
-    history: createWebHashHistory(),
-    routes
-  })
 
-  
   instance
     .use(ElementPlus, { locale: zhCn })
     .use(store)
     .use(router)
-    .use(plugins)
     .mount(container ? container.querySelector('#sub-app') : '#sub-app')
 }
 
 // 独立运行时
 // eslint-disable-next-line no-underscore-dangle
-if (!window.__POWERED_BY_QIANKUN__) {
+if (!(window as any).__POWERED_BY_QIANKUN__) {
   console.log('独立运行')
   render()
 }
@@ -59,7 +59,7 @@ export async function mount(props: any) {
 }
 
 export async function unmount() {
-  instance.unmount();
-  instance = null;
-  router = null
+  instance.unmount()
+  instance = null
+  // router = null
 }

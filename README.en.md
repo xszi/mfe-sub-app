@@ -1,0 +1,524 @@
+## ✨ New version
+
+Highly recommended: new version based on 'vite': [v3-admin-vite](https://github.com/un-pany/v3-admin-vite)
+
+# ⚡️ Introduction
+
+A basic solution for middle and background management system, based on vue3, typescript, element-plus and pinia
+
+- Electron: [v3-electron](https://github.com/un-pany/v3-electron)
+
+## Documentation
+
+[简体中文](https://juejin.cn/post/6963876125428678693) | English Docs
+
+## preview
+
+| position | account | link |
+| --- | --- | --- |
+| github-pages | admin or editor | [link](https://un-pany.github.io/v3-admin) |
+
+## Features
+
+```text
+- User management
+  - login
+  - logout
+	
+- Permission Authentication
+  - page permissions
+  - directive permissions
+
+- Multi-environment build
+  - development
+  - test
+  - production
+  
+- Global Features
+  - svg
+  - Multiple themes switching（Contains dark themes）
+  - Dynamic sidebar (supports multi-level routing)
+  - Dynamic breadcrumb
+  - Tags-view (Tab page Support right-click operation)
+  - Screenfull
+  - Responsive Sidebar
+  - monitor（based on mitojs）
+
+- Error Page
+  - 401
+  - 404
+
+- Dashboard
+  - admin
+  - editor
+
+- Auto deployment
+```
+
+## directory
+
+```
+# v3-admin
+├─ .env.development   # development environment
+├─ .env.production    # production environment
+├─ .env.test          # test environment
+├─ .eslintrc.js       # eslint
+├─ deploy             # auto deployment
+├─ public
+│  ├─ favicon.ico
+│  ├─ index.html
+├─ src
+│  ├─ @types          # ts declaration
+│  ├─ api             # api interface
+│  ├─ assets          # static resources
+│  ├─ components      # global components
+│  ├─ config          # global config
+│  ├─ constant        # constant
+│  ├─ directives      # global directives
+│  ├─ icons           # svg icon
+│  ├─ layout          # layout
+│  ├─ model           # global model
+│  ├─ plugins         # plugins
+│  ├─ router          # router
+│  ├─ store           # pinia store
+│  ├─ styles          # global styles
+│  ├─ utils           # utils
+│  └─ views           # pages
+│  ├─ App.vue         # entry page
+│  ├─ main.ts         # entry file
+│  └─ shims.d.ts      # module injection
+├─ tsconfig.json      # ts Compile config
+└─ vue.config.js      # vue-cli config
+```
+
+## Getting started
+
+```bash
+# config
+1. Install the 'eslint' plugin
+2. Install the 'volar' plugin
+3. node v16.x
+4. pnpm v6.x
+
+# clone the project
+git clone https://github.com/un-pany/v3-admin.git
+
+# enter the project directory
+cd v3-admin
+
+# install dependency
+pnpm
+
+# develop
+pnpm dev
+```
+
+## Multi-environment build
+
+```bash
+# build test environment
+pnpm build:test
+
+# build production environment
+pnpm build:prod
+```
+
+## Code format check
+
+```bash
+pnpm lint
+```
+
+## Auto deployment
+
+```bash
+pnpm deploy
+```
+
+# 📚 Essentials
+
+## Router
+
+### Config items
+
+```
+// this route cannot be clicked in breadcrumb navigation when noRedirect is set
+redirect: 'noRedirect'
+
+// 'asyncRoutes': Be sure to fill in the name of the set route, otherwise there may be problems in resetting the route
+// If you want to show to 'tags-view', is required
+name: 'router-name'
+
+meta: {
+  // Set the name of the route displayed in the sidebar and breadcrumbs
+  title: 'title'
+  // Icon to set this route, Remember to import svg into @/icons/svg
+  icon: 'svg-name'
+  // if set to true, lt will not appear in sidebar nav
+  hidden: true
+  // required roles to navigate to this route, Support multiple permissions stacking
+  roles: ['admin', 'editor']
+  // The default is true. If it is set to false, it will not be displayed in breadcrumbs
+  breadcrumb: false
+  // The default is false. If set to true, it will be fixed in tags-view
+  affix: true
+  
+  // When the children under a route declare more than one route, it will automatically become a nested mode
+  // When there is only one, the sub route will be displayed in the sidebar as the root route
+  // If you want to display your root route regardless of the number of children declarations below
+  // You can set alwayShow: true, which will ignore the previously defined rules and always display the root route
+  alwaysShow: true
+
+  // When this property is set, the sidebar corresponding to the activemenu property will be highlighted when entering the route
+  activeMenu: '/dashboard'
+}
+```
+
+### Dynamic routes
+
+`constantRoutes` places routes that do not require judgment permission in the resident route
+
+`asyncRoutes` places routes that require dynamic permission judgment and are dynamically added through `addRoute`
+
+**Note: Dynamic routing must be configured with the name attribute, otherwise the routing will not be reset when the routing is reset, which may cause business bugs**
+
+## Sidebar and breadcrumb
+
+### Sidebar
+
+![](https://ss.im5i.com/2021/10/20/yFV2O.png)
+
+Sidebar `@/layout/components/sidebar` is dynamically generated by reading routing and combining permission judgment (in other words, the constant route + has permission route)
+
+### Sidebar external links
+
+You can set an outer chain in the sidebar, as long as you fill in the useful URL path in Path, you will help you open this page when you click on the sidebar.
+
+```typescript
+{
+  path: 'link',
+  component: Layout,
+  children: [
+    {
+      path: 'https://github.com/un-pany/v3-admin',
+      meta: { title: 'link', icon: 'link' },
+      name: 'Link'
+    }
+  ]
+}
+```
+
+### Breadcrumb
+
+![](https://ss.im5i.com/2021/10/20/yFdaR.png)
+
+Breadcrumb ` @/layout/components/bread-crumb` is also generated dynamically according to the route. The route setting `breadcrumb: false` will not appear in the breadcrumb. The route setting `redirect: 'noredirect'`cannot be clicked in the breadcrumb
+
+## Permission
+
+When logging in, compare the routing table by obtaining the permissions (roles) of the current user, generate an accessible routing table according to the permissions of the current user, and then dynamically mount it to the router through `addRoute`.
+
+### Role permission control
+
+The control codes are all in `@/router/permission.ts`, which can be modified according to specific business:
+
+```typescript
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import router from '@/router'
+import { RouteLocationNormalized } from 'vue-router'
+import { useUserStoreHook } from '@/store/modules/user'
+import { usePermissionStoreHook } from '@/store/modules/permission'
+import { ElMessage } from 'element-plus'
+import { whiteList } from '@/config/white-list'
+import rolesSettings from '@/config/roles'
+import { getToken } from '@/utils/cookies'
+
+const userStore = useUserStoreHook()
+const permissionStore = usePermissionStoreHook()
+NProgress.configure({ showSpinner: false })
+
+router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized, next: any) => {
+  NProgress.start()
+  // Determine if the user is logged in
+  if (getToken()) {
+    if (to.path === '/login') {
+      // Redirect to the homepage if you log in and ready to enter the Login page.
+      next({ path: '/' })
+      NProgress.done()
+    } else {
+      // Check if the user has obtained its permissions role
+      if (userStore.roles.length === 0) {
+        try {
+          if (rolesSettings.openRoles) {
+            // Note: The role must be an array! E.g: ['admin'] 或 ['developer', 'editor']
+            await userStore.getInfo()
+            // Fetch the Roles returned by the interface
+            const roles = userStore.roles
+            // Generate accessible Routes based on roles
+            permissionStore.setRoutes(roles)
+          } else {
+            // Enable the default role without turning on the role function
+            userStore.setRoles(rolesSettings.defaultRoles)
+            permissionStore.setRoutes(rolesSettings.defaultRoles)
+          }
+          // Dynamically add accessible Routes
+          permissionStore.dynamicRoutes.forEach((route) => {
+            router.addRoute(route)
+          })
+          // Ensure that the added route has been completed
+          // Set replace: true, so navigation will not leave a history
+          next({ ...to, replace: true })
+        } catch (err: any) {
+          // Delete token and redirect to the login page
+          userStore.resetToken()
+          ElMessage.error(err || 'Has Error')
+          next('/login')
+          NProgress.done()
+        }
+      } else {
+        next()
+      }
+    }
+  } else {
+    // If there is no TOKEN
+    if (whiteList.indexOf(to.path) !== -1) {
+      // If you are in a whitelist that you don't need to log in, you will enter directly.
+      next()
+    } else {
+      // Other pages without access rights will be redirected to the login page
+      next('/login')
+      NProgress.done()
+    }
+  }
+})
+
+router.afterEach(() => {
+  NProgress.done()
+})
+```
+
+### Cancel the role feature
+
+If you don't need the function of role, you can turn it off in `@/config/roles`. After turning it off, the system will enable the default role (usually the admin role with the highest permission), that is, each logged in user can see all routes
+
+```typescript
+interface RolesSettings {
+  // Whether to enable the role function (After opening, the server needs to cooperate and return the role of the current user in the query user details interface)
+  openRoles: boolean
+  // After closing the role, the default role of the currently logged in user will take effect (admin by default, with all permissions)
+  defaultRoles: Array<string>
+}
+
+const rolesSettings: RolesSettings = {
+  openRoles: true,
+  defaultRoles: ['admin']
+}
+
+export default rolesSettings
+
+```
+
+### Directive permissions
+
+Concisely implement button level permission judgment (registered to the global and can be used directly):
+
+```html
+<el-tag v-permission="['admin']">admin is visible</el-tag>
+<el-tag v-permission="['editor']">editor is visible</el-tag>
+<el-tag v-permission="['admin','editor']">admin and editor are visible</el-tag>
+```
+
+However, in some cases, `v-permission` is not suitable. For example: ` el-tab ` or `el-table-column`  of ` element-plus` and other scenes that dynamically render `DOM`. You can only do this by manually setting `v-if`.
+
+At this time, you can use **permission judgment function**.
+
+```typescript
+import { checkPermission } from '@/utils/permission'
+```
+
+```html
+<el-tab-pane v-if="checkPermission(['admin'])" label="Admin">admin is visible</el-tab-pane>
+<el-tab-pane v-if="checkPermission(['editor'])" label="Editor">editor id visible</el-tab-pane>
+<el-tab-pane v-if="checkPermission(['admin','editor'])" label="AdminEditor">admin and editor are visible</el-tab-pane>
+```
+
+## Send HTTP request
+
+The general process is as follows：
+
+![](https://ss.im5i.com/2021/10/20/yFlGd.png)
+
+###  Common management API
+
+`@/api/login.ts`
+
+```typescript
+import { request } from '@/utils/service'
+
+interface UserRequestData {
+  username: string
+  password: string
+}
+
+export function accountLogin(data: UserRequestData) {
+  return request({
+    url: 'user/login',
+    method: 'post',
+    data
+  })
+}
+```
+
+### Encapsulated service.ts
+
+`@/utils/service.ts ` is based on axios, which encapsulates request interceptor, response interceptor, unified error handling, unified timeout handling, baseURL setting, CancelToken, etc.
+
+## Multi-environment
+
+### Build
+
+When the project is developed and need build, there are two built-in environments: 
+
+```sh
+# build test environment
+pnpm build:test
+
+# build production environment
+pnpm build:prod
+```
+
+### Variables
+
+In the `.env.xxx` and other files, the variables corresponding to the environment are configured: 
+
+```sh
+# Interface corresponding to current environment baseURL
+VUE_APP_BASE_API = 'https://www.xxx.com'
+```
+
+access：
+
+```js
+console.log(process.env.VUE_APP_BASE_API)
+```
+
+# ✈️ Advanced
+
+## ESLint
+
+Code specifications are important!
+
+- Config item：Set in the `.eslintrc.js` file
+- Cancel auto lint：Set `lintOnSave` to `false` in `vue.config.js`
+- The ESlint plug-in of VSCode is recommended here. When coding, it can mark the code that does not comply with the specification in red, and when you save the code, it will automatically help you repair some simple problematic code (VScode configuration ESlint tutorial can be found through Google)
+- Perform lint manually：`pnpm lint`（Execute this command before submitting the code, especially if your `lintOnSave` is `false`）
+
+## Git Hooks
+
+gitHooks is configured in `package. json`, and the code will be detected every time you commit
+
+```json
+"gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+```
+
+## Cross origin
+
+Use `proxy` in `vue.config` for reverse proxy.
+
+For the corresponding production environment, `nginx` can be used as the reverse proxy.
+
+### Reverse proxy
+
+```typescript
+proxy: {
+  '/api/': {
+    target: 'http://xxxxxx/api/',
+    ws: true,
+    pathRewrite: {
+      '^/api/': ''
+    },
+    changeOrigin: true,
+    secure: false
+  }
+}
+```
+
+### CORS
+
+This scheme has nothing special to do for the front end. It is no different from ordinary sending requests in writing. Most of the workload is on the server.
+After completing [CORS](http://www.ruanyifeng.com/blog/2016/04/cors.html), you can easily call the interface in either the development environment or the production environment.
+
+## SVG
+
+There are global `@/components/svg-icon` components, and the icons can be stored in `@/icons/svg`.
+
+### Usage
+
+There is no need to import components into the page, which can be used directly.
+
+```html
+<!-- name is the svg file name -->
+<!-- class can modify the default style -->
+<svg-icon name="user" font-size="20px" class="icon" />
+```
+
+### Get more icons
+
+Recommended use [iconfont](https://www.iconfont.cn/)
+
+## Auto deployment
+
+Fill in the **server IP, port, username, password** and other information in the `deploy/index. JS` file, and then execute the `pnpm deploy` command to automatically publish dist file to the corresponding server.
+
+> Note: the username, password and other information in this file are sensitive information and shouldn't be uploaded to the remote repositories, which is very important!
+
+## Add new theme（Take dark theme as an example）
+
+- New theme
+  - `src/style/theme/dark/index.scss`
+  - `src/style/theme/dark/setting.scss`
+- Register the new theme
+  - `src/style/theme/register.scss`
+  - `src/config/theme.ts`
+
+# ❓ Common problem
+
+## All errors
+
+Google can solve 99% of error reports.
+
+## Dependency error
+
+- Recommended use pnpm
+- Attempt to delete `node_modules` `.lock` and install again
+- Google search it
+
+## When the routing mode is switched to browserhistory, a blank page appears after refreshing
+
+Change the value of `publicPath` in the ` @/config/vue.custom.config.ts` file from `./` to`/`
+
+# ☕ other
+
+## Standing on the shoulders of giants
+
+- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+- [vue3-composition-admin](https://github.com/rcyj-FED/vue3-composition-admin)
+- [vue-vben-admin](https://github.com/anncwb/vue-vben-admin)
+- [d2-admin](https://github.com/d2-projects/d2-admin)
+- [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template)
+- [vue3-antd-admin](https://github.com/buqiyuan/vue3-antd-admin)
+
+# 📄 License
+
+[MIT](https://github.com/un-pany/v3-admin/blob/master/LICENSE)
+
+Copyright (c) 2021 UNPany

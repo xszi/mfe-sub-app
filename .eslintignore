@@ -1,8 +1,3 @@
-build/*.js
-node_modules
-src/assets
-public
-dist
-src/static
-src/utils/validate.js
-src/utils/sdk/wpssdk.js
+vue.config.js
+public-path.ts
+mock/

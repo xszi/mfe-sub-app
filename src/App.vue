@@ -1,28 +1,15 @@
 <template>
-  <div id="sub-app">
+  <ElConfigProvider :locale="locale">
     <router-view />
-  </div>
+  </ElConfigProvider>
 </template>
 
-<style lang="scss">
-#sub-app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  // text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts" setup>
+import { ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import { useAppStore } from '@/store/modules/app'
 
-#nav {
-  padding: 30px;
+const locale = zhCn // element-plus 设置为中文
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+useAppStore().initTheme() // 初始化 Theme
+</script>
