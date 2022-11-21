@@ -7,7 +7,7 @@ import { usePermissionStoreHook } from '@/store/modules/permission'
 import { ElMessage } from 'element-plus'
 import { whiteList } from '@/config/white-list'
 import rolesSettings from '@/config/roles'
-import { getToken } from '@/utils/cookies'
+// import { getToken } from '@/utils/cookies'
 
 NProgress.configure({ showSpinner: false })
 
@@ -15,6 +15,10 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
   NProgress.start()
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
+  const getToken = () => {
+    const token = sessionStorage.getItem('frame_token') || 'aaa'
+    return token
+  }
   // 判断该用户是否登录
   if (getToken()) {
     if (to.path === '/login') {

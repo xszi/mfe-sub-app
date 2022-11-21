@@ -15,7 +15,7 @@ module.exports = {
       publicPath: '/',
     },
     hot: true,
-    port: '9999',
+    port: '10001',
     headers: {
       'Access-Control-Allow-Origin': '*'
     },

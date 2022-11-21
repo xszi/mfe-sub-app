@@ -14,8 +14,8 @@ A basic solution for middle and background management system, based on vue3, typ
 
 ## preview
 
-| position | account | link |
-| --- | --- | --- |
+| position     | account         | link                                       |
+| ------------ | --------------- | ------------------------------------------ |
 | github-pages | admin or editor | [link](https://un-pany.github.io/v3-admin) |
 
 ## Features
@@ -24,7 +24,7 @@ A basic solution for middle and background management system, based on vue3, typ
 - User management
   - login
   - logout
-	
+
 - Permission Authentication
   - page permissions
   - directive permissions
@@ -33,7 +33,7 @@ A basic solution for middle and background management system, based on vue3, typ
   - development
   - test
   - production
-  
+
 - Global Features
   - svg
   - Multiple themes switching（Contains dark themes）
@@ -162,7 +162,7 @@ meta: {
   breadcrumb: false
   // The default is false. If set to true, it will be fixed in tags-view
   affix: true
-  
+
   // When the children under a route declare more than one route, it will automatically become a nested mode
   // When there is only one, the sub route will be displayed in the sidebar as the root route
   // If you want to display your root route regardless of the number of children declarations below
@@ -223,79 +223,86 @@ When logging in, compare the routing table by obtaining the permissions (roles) 
 The control codes are all in `@/router/permission.ts`, which can be modified according to specific business:
 
 ```typescript
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-import router from '@/router'
-import { RouteLocationNormalized } from 'vue-router'
-import { useUserStoreHook } from '@/store/modules/user'
-import { usePermissionStoreHook } from '@/store/modules/permission'
-import { ElMessage } from 'element-plus'
-import { whiteList } from '@/config/white-list'
-import rolesSettings from '@/config/roles'
-import { getToken } from '@/utils/cookies'
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+import router from "@/router";
+import { RouteLocationNormalized } from "vue-router";
+import { useUserStoreHook } from "@/store/modules/user";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+import { ElMessage } from "element-plus";
+import { whiteList } from "@/config/white-list";
+import rolesSettings from "@/config/roles";
+import { getToken } from "@/utils/cookies";
 
-const userStore = useUserStoreHook()
-const permissionStore = usePermissionStoreHook()
-NProgress.configure({ showSpinner: false })
+const userStore = useUserStoreHook();
+const permissionStore = usePermissionStoreHook();
+NProgress.configure({ showSpinner: false });
 
-router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized, next: any) => {
-  NProgress.start()
-  // Determine if the user is logged in
-  if (getToken()) {
-    if (to.path === '/login') {
-      // Redirect to the homepage if you log in and ready to enter the Login page.
-      next({ path: '/' })
-      NProgress.done()
-    } else {
-      // Check if the user has obtained its permissions role
-      if (userStore.roles.length === 0) {
-        try {
-          if (rolesSettings.openRoles) {
-            // Note: The role must be an array! E.g: ['admin'] 或 ['developer', 'editor']
-            await userStore.getInfo()
-            // Fetch the Roles returned by the interface
-            const roles = userStore.roles
-            // Generate accessible Routes based on roles
-            permissionStore.setRoutes(roles)
-          } else {
-            // Enable the default role without turning on the role function
-            userStore.setRoles(rolesSettings.defaultRoles)
-            permissionStore.setRoutes(rolesSettings.defaultRoles)
-          }
-          // Dynamically add accessible Routes
-          permissionStore.dynamicRoutes.forEach((route) => {
-            router.addRoute(route)
-          })
-          // Ensure that the added route has been completed
-          // Set replace: true, so navigation will not leave a history
-          next({ ...to, replace: true })
-        } catch (err: any) {
-          // Delete token and redirect to the login page
-          userStore.resetToken()
-          ElMessage.error(err || 'Has Error')
-          next('/login')
-          NProgress.done()
-        }
+router.beforeEach(
+  async (
+    to: RouteLocationNormalized,
+    _: RouteLocationNormalized,
+    next: any
+  ) => {
+    NProgress.start();
+    // Determine if the user is logged in
+    if (getToken()) {
+      if (to.path === "/login") {
+        // Redirect to the homepage if you log in and ready to enter the Login page.
+        next({ path: "/" });
+        NProgress.done();
       } else {
-        next()
+        // Check if the user has obtained its permissions role
+        if (userStore.roles.length === 0) {
+          try {
+            if (rolesSettings.openRoles) {
+              // Note: The role must be an array! E.g: ['admin'] 或 ['developer', 'editor']
+              await userStore.getInfo();
+              // Fetch the Roles returned by the interface
+              const roles = userStore.roles;
+              // Generate accessible Routes based on roles
+              permissionStore.setRoutes(roles);
+            } else {
+              // Enable the default role without turning on the role function
+              userStore.setRoles(rolesSettings.defaultRoles);
+              permissionStore.setRoutes(rolesSettings.defaultRoles);
+            }
+            // Dynamically add accessible Routes
+            permissionStore.dynamicRoutes.forEach((route) => {
+              router.addRoute(route);
+            });
+            // Ensure that the added route has been completed
+            // Set replace: true, so navigation will not leave a history
+            next({ ...to, replace: true });
+          } catch (err: any) {
+            // Delete token and redirect to the login page
+            userStore.resetToken();
+            ElMessage.error(err || "Has Error");
+            // next('/login')
+            next("/dashboard");
+            NProgress.done();
+          }
+        } else {
+          next();
+        }
+      }
+    } else {
+      // If there is no TOKEN
+      if (whiteList.indexOf(to.path) !== -1) {
+        // If you are in a whitelist that you don't need to log in, you will enter directly.
+        next();
+      } else {
+        // Other pages without access rights will be redirected to the login page
+        next("/login");
+        NProgress.done();
       }
     }
-  } else {
-    // If there is no TOKEN
-    if (whiteList.indexOf(to.path) !== -1) {
-      // If you are in a whitelist that you don't need to log in, you will enter directly.
-      next()
-    } else {
-      // Other pages without access rights will be redirected to the login page
-      next('/login')
-      NProgress.done()
-    }
   }
-})
+);
 
 router.afterEach(() => {
-  NProgress.done()
-})
+  NProgress.done();
+});
 ```
 
 ### Cancel the role feature
@@ -305,18 +312,17 @@ If you don't need the function of role, you can turn it off in `@/config/roles`.
 ```typescript
 interface RolesSettings {
   // Whether to enable the role function (After opening, the server needs to cooperate and return the role of the current user in the query user details interface)
-  openRoles: boolean
+  openRoles: boolean;
   // After closing the role, the default role of the currently logged in user will take effect (admin by default, with all permissions)
-  defaultRoles: Array<string>
+  defaultRoles: Array<string>;
 }
 
 const rolesSettings: RolesSettings = {
   openRoles: true,
-  defaultRoles: ['admin']
-}
+  defaultRoles: ["admin"],
+};
 
-export default rolesSettings
-
+export default rolesSettings;
 ```
 
 ### Directive permissions
@@ -329,18 +335,24 @@ Concisely implement button level permission judgment (registered to the global a
 <el-tag v-permission="['admin','editor']">admin and editor are visible</el-tag>
 ```
 
-However, in some cases, `v-permission` is not suitable. For example: ` el-tab ` or `el-table-column`  of ` element-plus` and other scenes that dynamically render `DOM`. You can only do this by manually setting `v-if`.
+However, in some cases, `v-permission` is not suitable. For example: `el-tab` or `el-table-column` of ` element-plus` and other scenes that dynamically render `DOM`. You can only do this by manually setting `v-if`.
 
 At this time, you can use **permission judgment function**.
 
 ```typescript
-import { checkPermission } from '@/utils/permission'
+import { checkPermission } from "@/utils/permission";
 ```
 
 ```html
-<el-tab-pane v-if="checkPermission(['admin'])" label="Admin">admin is visible</el-tab-pane>
-<el-tab-pane v-if="checkPermission(['editor'])" label="Editor">editor id visible</el-tab-pane>
-<el-tab-pane v-if="checkPermission(['admin','editor'])" label="AdminEditor">admin and editor are visible</el-tab-pane>
+<el-tab-pane v-if="checkPermission(['admin'])" label="Admin"
+  >admin is visible</el-tab-pane
+>
+<el-tab-pane v-if="checkPermission(['editor'])" label="Editor"
+  >editor id visible</el-tab-pane
+>
+<el-tab-pane v-if="checkPermission(['admin','editor'])" label="AdminEditor"
+  >admin and editor are visible</el-tab-pane
+>
 ```
 
 ## Send HTTP request
@@ -349,24 +361,24 @@ The general process is as follows：
 
 ![](https://ss.im5i.com/2021/10/20/yFlGd.png)
 
-###  Common management API
+### Common management API
 
 `@/api/login.ts`
 
 ```typescript
-import { request } from '@/utils/service'
+import { request } from "@/utils/service";
 
 interface UserRequestData {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 export function accountLogin(data: UserRequestData) {
   return request({
-    url: 'user/login',
-    method: 'post',
-    data
-  })
+    url: "user/login",
+    method: "post",
+    data,
+  });
 }
 ```
 
@@ -378,7 +390,7 @@ export function accountLogin(data: UserRequestData) {
 
 ### Build
 
-When the project is developed and need build, there are two built-in environments: 
+When the project is developed and need build, there are two built-in environments:
 
 ```sh
 # build test environment
@@ -390,7 +402,7 @@ pnpm build:prod
 
 ### Variables
 
-In the `.env.xxx` and other files, the variables corresponding to the environment are configured: 
+In the `.env.xxx` and other files, the variables corresponding to the environment are configured:
 
 ```sh
 # Interface corresponding to current environment baseURL
@@ -400,7 +412,7 @@ VUE_APP_BASE_API = 'https://www.xxx.com'
 access：
 
 ```js
-console.log(process.env.VUE_APP_BASE_API)
+console.log(process.env.VUE_APP_BASE_API);
 ```
 
 # ✈️ Advanced
