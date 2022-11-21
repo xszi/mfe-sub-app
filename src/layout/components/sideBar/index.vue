@@ -40,7 +40,6 @@ const routes = computed(() => {
   return usePermissionStore().routes
 })
 
-console.log(routes, 'routes')
 const showLogo = computed(() => {
   return useSettingsStore().showSidebarLogo
 })

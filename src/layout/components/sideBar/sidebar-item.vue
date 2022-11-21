@@ -41,6 +41,7 @@ import path from 'path'
 import { computed, PropType } from 'vue'
 import { RouteRecordRaw } from 'vue-router'
 import { isExternal } from '@/utils/validate'
+//  Vetur(v0.35.0) 暂不支持ts, 可先不处理，也可以使用插件 Volar 以取代 Vetur
 import SidebarItemLink from './sidebar-item-link.vue'
 
 const props = defineProps({
@@ -61,6 +62,7 @@ const props = defineProps({
     required: true
   }
 })
+
 const alwaysShowRootMenu = computed(() => {
   return !!(props.item.meta && props.item.meta.alwaysShow)
 })
