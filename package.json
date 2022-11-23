@@ -18,13 +18,14 @@
     "element-plus": "^2.1.10",
     "js-cookie": "^3.0.1",
     "lodash-es": "^4.17.21",
+    "mitt": "^3.0.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^6.2.0",
     "pinia": "^2.0.13",
     "screenfull": "^6.0.1",
     "vue": "^3.2.33",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.1",

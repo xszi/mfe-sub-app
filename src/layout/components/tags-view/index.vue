@@ -21,35 +21,16 @@
         </el-icon>
       </router-link>
     </ScrollPane>
-    <ul
-      v-show="state.visible"
-      :style="{left: state.left + 'px', top: state.top + 'px'}"
-      class="contextmenu"
-    >
-      <li @click="state.refreshSelectedTag(state.selectedTag)">
-        刷新
-      </li>
-      <li
-        v-if="!state.isAffix(state.selectedTag)"
-        @click="state.closeSelectedTag(state.selectedTag)"
-      >
-        关闭
-      </li>
-      <li @click="state.closeOthersTags">
-        关闭其它
-      </li>
-      <li @click="state.closeAllTags(state.selectedTag)">
-        关闭所有
-      </li>
-    </ul>
   </div>
 </template>
 
 <script lang="ts" setup>
+import mitter from '@/utils/mittBus'
 import path from 'path'
+import { addVisitedViewCache } from '@/utils/routeCache'
 import { useTagsViewStore, ITagView } from '@/store/modules/tags-view'
 import { usePermissionStore } from '@/store/modules/permission'
-import { computed, getCurrentInstance, nextTick, onBeforeMount, reactive, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeMount, onUnmounted, reactive, watch } from 'vue'
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import ScrollPane from './scroll-pane.vue'
 import { Close } from '@element-plus/icons-vue'
@@ -60,6 +41,7 @@ const router = useRouter()
 const instance = getCurrentInstance()
 const currentRoute = useRoute()
 const { proxy } = instance as any
+let visitedViews: ITagView[] = []
 
 const toLastView = (visitedViews: ITagView[], view: ITagView) => {
   const latestView = visitedViews.slice(-1)[0]
@@ -81,6 +63,18 @@ const toLastView = (visitedViews: ITagView[], view: ITagView) => {
     }
   }
 }
+
+const updateVisitedViews = () => {
+  console.log('updateVisitedViews')
+  visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
+  console.log(visitedViews, 'visitedViews===')
+}
+
+mitter.on('updateVisitedViews', updateVisitedViews)
+
+onUnmounted(() => {
+  mitter.off('foo', updateVisitedViews)
+})
 
 const state = reactive({
   visible: false,
@@ -146,9 +140,9 @@ const state = reactive({
   }
 })
 
-const visitedViews = computed(() => {
-  return tagsViewStore.visitedViews
-})
+// const visitedViews = computed(() => {
+//   return tagsViewStore.visitedViews
+// })
 const routes = computed(() => permissionStore.routes)
 
 const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
@@ -180,14 +174,16 @@ const initTags = () => {
   for (const tag of state.affixTags) {
     // 必须含有 name 属性
     if (tag.name) {
-      tagsViewStore.addVisitedView(tag as ITagView)
+      // tagsViewStore.addVisitedView(tag as ITagView)
+      addVisitedViewCache(tag as ITagView)
     }
   }
 }
 
 const addTags = () => {
   if (currentRoute.name) {
-    tagsViewStore.addVisitedView(currentRoute)
+    // tagsViewStore.addVisitedView(currentRoute)
+    addVisitedViewCache(currentRoute)
   }
   return false
 }

@@ -19,7 +19,7 @@ export const useTagsViewStore = defineStore({
   },
   actions: {
     addVisitedView(view: ITagView) {
-      if (this.visitedViews.some((v) => v.path === view.path)) return
+      if (this.visitedViews.some(v => v.path === view.path)) return
       this.visitedViews.push(
         Object.assign({}, view, {
           title: view.meta?.title || 'no-name'

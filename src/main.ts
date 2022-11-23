@@ -1,5 +1,6 @@
 import './public-path.ts'
 import { createApp, Directive } from 'vue'
+import mitt from 'mitt'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
@@ -30,7 +31,8 @@ function render(props: any = {}) {
   if (props) {
     // 注入 actions 实例
     container = props.container
-    instance.config.globalProperties.parRouter = props.parRouter
+    instance.config.globalProperties.$parRouter = props.parRouter
+    instance.config.globalProperties.$eventbus = mitt()
     // const { proxy } = getCurrentInstance();
   }
 

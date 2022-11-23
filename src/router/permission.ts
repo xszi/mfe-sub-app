@@ -19,6 +19,8 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
     const token = sessionStorage.getItem('frame_token') || 'aaa'
     return token
   }
+  console.log(getToken(), 'xxxddd')
+
   // 判断该用户是否登录
   if (getToken()) {
     if (to.path === '/login') {
@@ -27,6 +29,7 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
       NProgress.done()
     } else {
       // 检查用户是否已获得其权限角色
+      console.log(userStore.roles, 'vvvvdddvd')
       if (userStore.roles.length === 0) {
         try {
           if (rolesSettings.openRoles) {

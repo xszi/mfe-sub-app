@@ -35,14 +35,14 @@
         手动上报
       </el-button>
     </el-card>
-    <IframeBreadcurmb />
+    <!-- <IframeBreadcurmb /> -->
   </div>
 </template>
 
 <script lang='ts' setup>
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
-import IframeBreadcurmb from './components/iframe-breadcurmb.vue'
+// import IframeBreadcurmb from './components/iframe-breadcurmb.vue'
 
 const count = ref(0)
 
