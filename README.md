@@ -2,10 +2,6 @@
 
 一个中后台管理系统基础解决方案，基于 Vue3、TypeScript、Element-Plus 和 Pinia
 
-## 📚 文档
-
-[简体中文](https://juejin.cn/post/6963876125428678693) | [English Docs](./README.en.md)
-
 ## ⌛ 功能
 
 ```text
@@ -92,10 +88,11 @@
 git clone https://github.com/xszi/v3-sub-app.git
 
 # 进入项目目录
-cd v3-admin
+cd v3-sub-app
 
 # 安装依赖
 pnpm i
+> 使用pnpm对于大型众多项目可以节省磁盘空间，因为不同项目依赖的同一个包的同一版本只会在统一位置保存一份（不同版本也是统一位置保存），而npm或yarn会每个项目保存一份。
 
 # 启动服务
 pnpm dev
