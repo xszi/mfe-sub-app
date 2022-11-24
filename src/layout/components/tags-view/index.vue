@@ -66,9 +66,8 @@ const toLastView = (visitedViews: ITagView[], view: ITagView) => {
 }
 
 const updateVisitedViews = () => {
-  console.log('updateVisitedViews')
   visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
-  console.log(visitedViews, 'visitedViews===')
+  console.log(visitedViews, '*updateVisitedViews*')
 }
 
 mitter.on('updateVisitedViews', updateVisitedViews)

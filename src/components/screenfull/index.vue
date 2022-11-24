@@ -1,9 +1,11 @@
 <template>
   <div @click="click">
     <el-tooltip effect="dark" content="全屏" placement="bottom">
-      <el-icon :size="20">
-        <full-screen />
-      </el-icon>
+      <span>
+        <el-icon :size="20">
+          <full-screen />
+        </el-icon>
+      </span>
     </el-tooltip>
   </div>
 </template>

@@ -5,7 +5,7 @@
     <BreadCrumb class="breadcrumb" />
     <div class="right-menu">
       <Screenfull v-if="showScreenfull" class="right-menu-item" />
-      <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
+      <!-- <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" /> -->
       <el-dropdown class="right-menu-item">
         <el-avatar :icon="UserFilled" :size="34" />
         <template #dropdown>
@@ -32,8 +32,8 @@ import { useSettingsStore } from '@/store/modules/settings'
 import { useUserStore } from '@/store/modules/user'
 import BreadCrumb from '../bread-crumb/index.vue'
 import Hamburger from '../hamburger/index.vue'
-import ThemeSwitch from '@/components/theme-switch/index.vue'
 import Screenfull from '@/components/screenfull/index.vue'
+// import ThemeSwitch from '@/components/theme-switch/index.vue'
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -42,9 +42,9 @@ const userStore = useUserStore()
 const sidebar = computed(() => {
   return appStore.sidebar
 })
-const showThemeSwitch = computed(() => {
-  return settingsStore.showThemeSwitch
-})
+// const showThemeSwitch = computed(() => {
+//   return settingsStore.showThemeSwitch
+// })
 const showScreenfull = computed(() => {
   return settingsStore.showScreenfull
 })
