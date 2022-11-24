@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { usePermissionStore } from './permission'
 import { getToken, removeToken, setToken } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
-import { accountLogin, userInfoRequest } from '@/api/login'
+import { accountLogin } from '@/api/login'
 import { RouteRecordRaw } from 'vue-router'
 
 interface IUserState {
@@ -43,16 +43,29 @@ export const useUserStore = defineStore({
     },
     /** 获取用户详情 */
     getInfo() {
-      return new Promise((resolve, reject) => {
-        userInfoRequest()
-          .then((res: any) => {
-            this.roles = res.data.user.roles
-            resolve(res)
-          })
-          .catch((error) => {
-            reject(error)
-            // resolve(error)
-          })
+      return new Promise((resolve) => {
+        this.roles = ['editor']
+        const res = {
+          code: 20000,
+          data: {
+            user: {
+              avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+              email: 'editor@test.com',
+              id: 1,
+              roles: ['editor']
+            }
+          }
+        }
+        resolve(res)
+        // userInfoRequest()
+        //   .then((res: any) => {
+        //     this.roles = res.data.user.roles
+        //     resolve(res)
+        //   })
+        //   .catch((error) => {
+        //     reject(error)
+        //     // resolve(error)
+        //   })
       })
     },
     /** 切换角色 */
