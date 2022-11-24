@@ -1,26 +1,10 @@
-## ✨ 新版
-
-强烈推荐：基于 vite 的新版本 [v3-admin-vite](https://github.com/un-pany/v3-admin-vite)
-
 ## ⚡️ 简介
 
 一个中后台管理系统基础解决方案，基于 Vue3、TypeScript、Element-Plus 和 Pinia
 
-- Electron 桌面版: [v3-electron](https://github.com/un-pany/v3-electron)
-
 ## 📚 文档
 
 [简体中文](https://juejin.cn/post/6963876125428678693) | [English Docs](./README.en.md)
-
-## 国内仓库
-
-[Gitee](https://gitee.com/un-pany/v3-admin)
-
-## 预览
-
-| 位置 | 账号 | 链接 |
-| --- | --- | --- |
-| github-pages | admin或editor | [链接](https://un-pany.github.io/v3-admin) |
 
 ## ⌛ 功能
 
@@ -28,7 +12,7 @@
 - 用户管理
   - 登录
   - 注销
-	
+
 - 权限验证
   - 页面权限
   - 指令权限
@@ -37,7 +21,7 @@
   - development
   - test
   - production
-  
+
 - 全局功能
   - svg
   - 多主题切换（内置黑暗主题）
@@ -105,7 +89,7 @@
 4. pnpm v6.x
 
 # 克隆项目
-git clone https://github.com/un-pany/v3-admin.git
+git clone https://github.com/xszi/v3-sub-app.git
 
 # 进入项目目录
 cd v3-admin
@@ -165,14 +149,8 @@ pnpm deploy
 - [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template)
 - [vue3-antd-admin](https://github.com/buqiyuan/vue3-antd-admin)
 
-## 交流（吹水）群
-
-QQ群：1014374415
-
-![v3-admin.png](https://github.com/un-pany/v3-admin/blob/master/src/assets/docs/qq.png)
-
 ## 📄 License
 
-[MIT](https://github.com/un-pany/v3-admin/blob/master/LICENSE)
+[MIT](https://github.com/xszi/v3-sub-app)
 
-Copyright (c) 2021 UNPany
+Copyright (c) 2022 xszi
