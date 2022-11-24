@@ -151,3 +151,7 @@ pnpm deploy
 [MIT](https://github.com/xszi/v3-sub-app)
 
 Copyright (c) 2022 xszi
+
+```
+git config --global https.sslVerify "false"
+```

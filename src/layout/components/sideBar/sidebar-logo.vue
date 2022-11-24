@@ -3,17 +3,19 @@
   <div class="sidebar-logo-container" :class="{collapse: collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img src="@/assets/layout/logo.png" class="sidebar-logo">
+        <img src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png" class="sidebar-logo">
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img src="@/assets/layout/logo-text-1.png" class="sidebar-logo-text">
+        <img src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png" class="sidebar-logo-text">
+        <h1 class="sidebar-title">
+          V3 子应用
+        </h1>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
-
 defineProps({
   collapse: {
     type: Boolean,
@@ -42,18 +44,21 @@ defineProps({
   text-align: center;
   overflow: hidden;
   .sidebar-logo {
+    width: 60px;
+    height: 60px;
     display: none;
   }
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
     & .sidebar-logo-text {
-      height: 100%;
+      width: 60px;
+      height: 60px;
       vertical-align: middle;
     }
     & .sidebar-title {
       display: inline-block;
-      margin: 0;
+      margin: 0 0 0 10px;
       color: #fff;
       font-weight: 600;
       line-height: 50px;
