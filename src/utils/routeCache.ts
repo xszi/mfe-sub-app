@@ -1,10 +1,15 @@
 import emitter from '@/utils/mittBus'
+import { _RouteLocationBase, RouteLocationNormalized } from 'vue-router'
+export interface ITagView extends Partial<RouteLocationNormalized> {
+  title?: string
+  to?: _RouteLocationBase
+}
 // function addView(view: any) {
 //   addVisitedView(view)
 //   addCachedView(view)
 // }
 
-export const addVisitedViewCache = (view: any) => {
+export const addVisitedViewCache = (view: ITagView) => {
   const visitedViews = JSON.parse(<string>sessionStorage.getItem('visitedViews'))
   if (visitedViews.some((v: any) => v.path === view.path)) return
   visitedViews.push(
@@ -12,6 +17,18 @@ export const addVisitedViewCache = (view: any) => {
       title: view.meta?.title || 'no-name'
     })
   )
+  sessionStorage.setItem('visitedViews', JSON.stringify(visitedViews))
+  emitter.emit('updateVisitedViews')
+}
+
+export const delVisitedViewCache = (view: ITagView) => {
+  const visitedViews = JSON.parse(<string>sessionStorage.getItem('visitedViews'))
+  for (const [i, v] of visitedViews.entries()) {
+    if (v.path === view.path) {
+      visitedViews.splice(i, 1)
+      break
+    }
+  }
   sessionStorage.setItem('visitedViews', JSON.stringify(visitedViews))
   emitter.emit('updateVisitedViews')
 }

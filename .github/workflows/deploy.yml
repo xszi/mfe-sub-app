@@ -1,4 +1,4 @@
-name: Build And Deploy v3-admin
+name: Build And Deploy v3-sub-app
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: latest
-      
+
       - name: Build
         run: pnpm install && pnpm build:prod
 

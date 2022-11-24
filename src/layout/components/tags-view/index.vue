@@ -9,7 +9,6 @@
         :to="{path: tag.path, query: tag.query, fullPath: tag.fullPath}"
         class="tags-view-item"
         @click.middle="!state.isAffix(tag) ? state.closeSelectedTag(tag) : ''"
-        @contextmenu.prevent="state.openMenu(tag, $event)"
       >
         {{ tag.meta?.title }}
         <el-icon
@@ -27,7 +26,7 @@
 <script lang="ts" setup>
 import mitter from '@/utils/mittBus'
 import path from 'path'
-import { addVisitedViewCache } from '@/utils/routeCache'
+import { addVisitedViewCache, delVisitedViewCache } from '@/utils/routeCache'
 import { useTagsViewStore, ITagView } from '@/store/modules/tags-view'
 import { usePermissionStore } from '@/store/modules/permission'
 import { computed, getCurrentInstance, nextTick, onBeforeMount, onUnmounted, reactive, watch } from 'vue'
@@ -40,11 +39,13 @@ const permissionStore = usePermissionStore()
 const router = useRouter()
 const instance = getCurrentInstance()
 const currentRoute = useRoute()
-const { proxy } = instance as any
+// const { proxy } = instance as any
 let visitedViews: ITagView[] = []
 
 const toLastView = (visitedViews: ITagView[], view: ITagView) => {
   const latestView = visitedViews.slice(-1)[0]
+  console.log(latestView, view, 'latestView')
+
   if (latestView !== undefined && latestView.fullPath !== undefined) {
     router.push(latestView.fullPath).catch((err) => {
       console.warn(err)
@@ -97,52 +98,19 @@ const state = reactive({
     })
   },
   closeSelectedTag: (view: ITagView) => {
-    tagsViewStore.delVisitedView(view)
+    // tagsViewStore.delVisitedView(view)
+    delVisitedViewCache(view)
     if (state.isActive(view)) {
-      toLastView(tagsViewStore.visitedViews, view)
+      const visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
+      toLastView(visitedViews, view)
     }
-  },
-  closeOthersTags: () => {
-    if (
-      state.selectedTag.fullPath !== currentRoute.path &&
-      state.selectedTag.fullPath !== undefined
-    ) {
-      router.push(state.selectedTag.fullPath).catch((err) => {
-        console.warn(err)
-      })
-    }
-    tagsViewStore.delOthersVisitedViews(state.selectedTag as ITagView)
-  },
-  closeAllTags: (view: ITagView) => {
-    tagsViewStore.delAllVisitedViews()
-    if (state.affixTags.some((tag) => tag.path === currentRoute.path)) {
-      return
-    }
-    toLastView(tagsViewStore.visitedViews, view)
-  },
-  openMenu: (tag: ITagView, e: MouseEvent) => {
-    const menuMinWidth = 105
-    const offsetLeft = proxy.$el.getBoundingClientRect().left // container margin left
-    const offsetWidth = proxy.$el.offsetWidth // container width
-    const maxLeft = offsetWidth - menuMinWidth // left boundary
-    const left = e.clientX - offsetLeft + 15 // 15: margin right
-    if (left > maxLeft) {
-      state.left = maxLeft
-    } else {
-      state.left = left
-    }
-    state.top = e.clientY
-    state.visible = true
-    state.selectedTag = tag
-  },
-  closeMenu: () => {
-    state.visible = false
   }
 })
 
 // const visitedViews = computed(() => {
 //   return tagsViewStore.visitedViews
 // })
+
 const routes = computed(() => permissionStore.routes)
 
 const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
@@ -208,17 +176,6 @@ watch(
   () => {
     addTags()
     moveToCurrentTag()
-  }
-)
-
-watch(
-  () => state.visible,
-  (value) => {
-    if (value) {
-      document.body.addEventListener('click', state.closeMenu)
-    } else {
-      document.body.removeEventListener('click', state.closeMenu)
-    }
   }
 )
 

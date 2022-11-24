@@ -1,7 +1,7 @@
 {
-  "name": "v3-admin",
+  "name": "v3-sub-app",
   "version": "3.1.3",
-  "homepage": "https://github.com/un-pany/v3-admin",
+  "homepage": "https://github.com/xszi/v3-sub-app",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:test": "vue-cli-service build --mode test",

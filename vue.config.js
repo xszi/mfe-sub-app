@@ -41,7 +41,7 @@ module.exports = {
   configureWebpack: () => {
     const config = {
       // webpack 配置的项目名称, 可以在 index.html 中被访问，用来注入页面标题
-      name: 'v3-admin',
+      name: 'v3-sub-app',
       resolve: {
         fallback: {
           // 默认情况下，webpack5 不再包含用于 node.js 模块的 polyfills，所以引入 path-browserify
@@ -59,7 +59,7 @@ module.exports = {
       config.plugins = [
         new WebpackBar({
           // webpack 配置的项目名称
-          name: 'v3-admin'
+          name: 'v3-sub-app'
         })
       ]
       // 生产环境清除 console.log

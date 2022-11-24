@@ -42,7 +42,7 @@
 ## 目录结构
 
 ```
-# v3-admin
+# v3-sub-app
 ├─ .env.development   # 开发环境
 ├─ .env.production    # 正式环境
 ├─ .env.test          # 测试环境
