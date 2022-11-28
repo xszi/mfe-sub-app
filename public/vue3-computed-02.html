@@ -12,7 +12,7 @@
     <script type="text/javascript">
         // 解决问题7：computed
         const bucket = new WeakMap()
-        let data = { foo: 1 }
+        let data = { foo: 1, bar: 2}
         const obj = new Proxy(data, {
             get(target, key) {
                 track(target, key)
@@ -49,6 +49,7 @@
             })
             effectsToRun.forEach(effectFn => {
                 if(effectFn.options.scheduler){
+                    // console.log(999, effectFn.options.scheduler);
                     effectFn.options.scheduler(effectFn)
                 } else {
                     effectFn()
@@ -69,9 +70,10 @@
                 cleanup(effectFn)
                 activeEffect = effectFn
                 effectStack.push(effectFn)
-                fn()
+                const res = fn()
                 effectStack.pop()
                 activeEffect = effectStack[effectStack.length - 1]
+                return res
             }
             effectFn.options = options // 调度函数
             effectFn.deps = []
@@ -81,17 +83,35 @@
             return effectFn
         }
 
-        effect(
-            () => {
-                console.log(obj.foo)
-            },
-            {
-                lazy: true
+        function computed(getter) {
+            let value
+            let dirty = true // 用来标识是否需要重新计算
+            const effectFn = effect(getter, {
+                lazy: true,
+                scheduler() {
+                    dirty = true
+                }
+            })
+            const obj = {
+                get value() {
+                    if(dirty) {
+                        value = effectFn()
+                        dirty = false
+                    }
+                    return value
+                }
             }
-        )
+            return obj
+        }
+        const sumRes = computed(() => { console.log(111); return (obj.foo + obj.bar)})
+        // console.log(sumRes);
+        console.log(sumRes.value)
+        console.log(sumRes.value)
+        // setTimeout(() => {
+        //     obj.foo++
+        // }, 3000)
         obj.foo++
-        obj.foo++
-        // console.log('结束了')
+        console.log(sumRes.value, '结束了')
     </script>
   <div id="sub-app"></div>
 </body>
