@@ -10,7 +10,7 @@
 </head>
 <body>
     <script type="text/javascript">
-        // 解决问题6：调度执行 —— 打印顺序
+        // 解决问题6：调度执行 —— 打印次数
         const bucket = new WeakMap()
         let data = { foo: 1 }
         const obj = new Proxy(data, {
@@ -77,18 +77,33 @@
             effectFn.deps = []
             effectFn()
         }
+        const jobQueue = new Set()
+        const p = Promise.resolve()
+
+        let isFlushing = false
+        function flushJob() {
+            if (isFlushing) return
+            isFlushing = true
+            p.then(() => {
+                jobQueue.forEach(job => job())
+            }).finally(() => {
+                isFlushing = false
+            })
+        }
         effect(
             () => {
                 console.log(obj.foo)
             },
             {
                 scheduler(fn) {
-                    setTimeout(fn)
+                    jobQueue.add(fn)
+                    flushJob()
                 }
             }
         )
         obj.foo++
-        console.log('结束了')
+        obj.foo++
+        // console.log('结束了')
     </script>
   <div id="sub-app"></div>
 </body>

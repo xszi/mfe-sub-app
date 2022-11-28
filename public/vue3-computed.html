@@ -10,7 +10,7 @@
 </head>
 <body>
     <script type="text/javascript">
-        // 解决问题6：调度执行 —— 打印顺序
+        // 解决问题7：computed
         const bucket = new WeakMap()
         let data = { foo: 1 }
         const obj = new Proxy(data, {
@@ -75,20 +75,23 @@
             }
             effectFn.options = options // 调度函数
             effectFn.deps = []
-            effectFn()
+            if (!options.lazy) {
+                effectFn()
+            }
+            return effectFn
         }
+
         effect(
             () => {
                 console.log(obj.foo)
             },
             {
-                scheduler(fn) {
-                    setTimeout(fn)
-                }
+                lazy: true
             }
         )
         obj.foo++
-        console.log('结束了')
+        obj.foo++
+        // console.log('结束了')
     </script>
   <div id="sub-app"></div>
 </body>
