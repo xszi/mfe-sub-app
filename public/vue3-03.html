@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 解决问题2：没有在副作用函数与被操作的目标字段之间建立明确的联系
+        // 三者之间的关系
+        // target
+        //    | —— key
+        //          | —— effectFn
+        // 需要使用新的数据结构WeakMap
+        const bucket = new WeakMap()
+        let data = { text: 'hello world' }
+        const obj = new Proxy(data, {
+            get(target, key) {
+                if (!activeEffect) return target[key]
+                let depsMap = bucket.get(target)
+                if (!depsMap) {
+                    bucket.set(target, (depsMap = new Map()))
+                }
+                let deps = depsMap.get(key)
+                if (!deps) {
+                    depsMap.set(key, (deps = new Set()))
+                }
+                deps.add(activeEffect)
+                return target[key]
+            },
+            set(target, key, newVal) {
+                target[key] = newVal
+                const depsMap = bucket.get(target)
+                if (!depsMap) return
+                const effects = depsMap.get(key)
+                effects && effects.forEach(fn => fn())
+            }
+        })
+        let activeEffect
+        function effect(fn) {
+            activeEffect = fn
+            fn()
+        }
+        effect(() => {
+            document.body.innerText = obj.text
+        })
+        setTimeout(() => {
+            // 这里没有副作用函数，不会触发
+            obj.noExist = 'hello vue3-03'
+        }, 3000)
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>

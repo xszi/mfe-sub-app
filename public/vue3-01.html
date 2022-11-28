@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 最简单版本响应式数据实现
+        const bucket = new Set()
+        let data = { text: 'hello world' }
+        const obj = new Proxy(data, {
+            get(target, key) {
+                // 入桶
+                bucket.add(effect)
+                return target[key]
+            },
+            set(target, key, newVal) {
+                target[key] = newVal
+                // 出桶
+                bucket.forEach(fn => fn())
+                return true
+            }
+        })
+        function effect() {
+            document.body.innerText = obj.text
+        }
+        effect()
+        setTimeout(() => {
+            obj.text = 'hello vue3-01'
+        }, 3000)
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>

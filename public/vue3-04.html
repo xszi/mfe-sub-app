@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 为什么要使用WeakMap数据结构？与Map有什么区别
+        const map = new Map();
+        const weakmap = new WeakMap();
+        (function(){
+            const foo = {foo: 1};
+            const bar = {bar: 2};
+            map.set(foo, 1);
+            weakmap.set(bar, 2);
+        })();
+        console.log(map.keys, 'map'); // 还能获取到keys
+        console.log(weakmap.keys, 'weakmap'); // 获取不到keys
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>

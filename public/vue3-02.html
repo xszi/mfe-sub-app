@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 解决问题1：副作用函数名字
+        const bucket = new Set()
+        let data = { text: 'hello world' }
+        const obj = new Proxy(data, {
+            get(target, key) {
+                // 入桶
+                if (activeEffect) {
+                    bucket.add(activeEffect)
+                }
+                return target[key]
+            },
+            set(target, key, newVal) {
+                target[key] = newVal
+                // 出桶
+                bucket.forEach(fn => fn())
+                return true
+            }
+        })
+        let activeEffect
+        function effect(fn) {
+            activeEffect = fn
+            fn()
+        }
+        effect(() => {
+            document.body.innerText = obj.text
+        })
+        setTimeout(() => {
+            obj.text = 'hello vue3-02'
+        }, 3000)
+        // setTimeout(() => {
+        //     // data对象中并不存在这个值
+        //     obj.noExist = 'hello vue3-02'
+        // }, 3000)
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>
