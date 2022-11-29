@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 解决问题7：watch
+        const bucket = new WeakMap()
+        let data = { foo: 1, bar: 2}
+        const obj = new Proxy(data, {
+            get(target, key) {
+                track(target, key)
+                return target[key]
+            },
+            set(target, key, newVal) {
+                target[key] = newVal
+                trigger(target, key)
+            }
+        })
+        function track(target, key) {
+            if (!activeEffect) return
+            let depsMap = bucket.get(target)
+            if (!depsMap) {
+                bucket.set(target, (depsMap = new Map()))
+            }
+            let deps = depsMap.get(key)
+            if (!deps) {
+                depsMap.set(key, (deps = new Set()))
+            }
+            deps.add(activeEffect)
+            activeEffect.deps.push(deps)
+        }
+        function trigger(target, key) {
+            const depsMap = bucket.get(target)
+            if (!depsMap) return
+            const effects = depsMap.get(key)
+            const effectsToRun = new Set()
+            // 触发的副作用函数与正在执行的副作用函数相同，则不触发执行
+            effects && effects.forEach(effectFn => {
+                if (effectFn !== activeEffect) {
+                    effectsToRun.add(effectFn)
+                }
+            })
+            effectsToRun.forEach(effectFn => {
+                if(effectFn.options.scheduler){
+                    // console.log(999, effectFn.options.scheduler);
+                    effectFn.options.scheduler(effectFn)
+                } else {
+                    effectFn()
+                }
+            })
+        }
+        function cleanup(effectFn) {
+            for (let i = 0; i < effectFn.deps.length; i++) {
+                const deps = effectFn.deps[i]
+                deps.delete(effectFn)
+            }
+            effectFn.deps.length = 0
+        }
+        let activeEffect // 只有一个暂存函数，嵌套时会被里层的副作用函数覆盖掉, 这时只暂存一个激活的副作用函数
+        const effectStack = []
+        function effect(fn, options = {}) {
+            const effectFn = () => {
+                cleanup(effectFn)
+                activeEffect = effectFn
+                effectStack.push(effectFn)
+                const res = fn()
+                effectStack.pop()
+                activeEffect = effectStack[effectStack.length - 1]
+                return res
+            }
+            effectFn.options = options // 调度函数
+            effectFn.deps = []
+            if (!options.lazy) {
+                effectFn()
+            }
+            return effectFn
+        }
+
+        function watch(source, cb) {
+            let getter
+            if (typeof source === 'function') {
+                getter = source
+            } else {
+                getter = () => traverse(source)
+            }
+            let oldVal, newVal
+
+            const effectFn = effect(
+                () => getter(source),
+                {
+                    lazy: true,
+                    scheduler() {
+                        newVal =effectFn()
+                        cb(newVal, oldVal)
+                        oldVal = newVal
+
+                    }
+                }
+            )
+            oldVal = effectFn()
+        }
+        function traverse(value, seen = new Set()) {
+            if(typeof value !== 'object' || value === null || seen.has(value)) return
+            console.log(value, 'xxx');
+            seen.add(value)
+            for(const key in value) {
+                traverse(value[key], seen)
+            }
+            return value
+        }
+        watch(
+            () => obj.foo,
+            (newVal, oldVal) => {
+                console.log(newVal, oldVal, 'obj.foo 值变化了')
+            }
+        )
+        setTimeout(() => {
+            obj.foo++
+        }, 3000)
+        obj.foo++
+        console.log('结束了')
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>
