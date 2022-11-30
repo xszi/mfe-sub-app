@@ -10,7 +10,7 @@
 </head>
 <body>
     <script type="text/javascript">
-        // 解决问题7：computed
+        // 解决问题7：computed嵌套问题解决
         const bucket = new WeakMap()
         let data = { foo: 1, bar: 2}
         const obj = new Proxy(data, {
@@ -90,6 +90,7 @@
                 lazy: true,
                 scheduler() {
                     dirty = true
+                    trigger(obj, 'value')
                 }
             })
             const obj = {
@@ -98,20 +99,19 @@
                         value = effectFn()
                         dirty = false
                     }
+                    track(obj, 'value')
                     return value
                 }
             }
             return obj
         }
         const sumRes = computed(() => { console.log(111); return (obj.foo + obj.bar)})
-        // console.log(sumRes);
-        console.log(sumRes.value)
-        console.log(sumRes.value)
-        // setTimeout(() => {
-        //     obj.foo++
-        // }, 3000)
-        obj.foo++
-        console.log(sumRes.value, '结束了')
+        effect(() => {
+            console.log(sumRes.value)
+        })
+        setTimeout(() => {
+            obj.foo++
+        }, 3000);
     </script>
   <div id="sub-app"></div>
 </body>
