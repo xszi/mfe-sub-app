@@ -182,6 +182,7 @@ watch(
 onBeforeMount(() => {
   initTags()
   addTags()
+  updateVisitedViews()
 })
 </script>
 

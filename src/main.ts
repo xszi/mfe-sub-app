@@ -13,12 +13,15 @@ import 'normalize.css'
 import * as directives from '@/directives'
 import '@/router/permission'
 import loadSvg from '@/icons'
+import actions from '@/shared/actions'
 
 // let router: any = null
 let instance: any = null
 
-function render(props: any = {}) {
+function render(props?: any) {
   instance = createApp(App)
+
+  actions.setActions(props)
   // // 加载所有插件
   // loadAllPlugins(instance)
   // 加载全局 SVG
