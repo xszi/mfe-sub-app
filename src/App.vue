@@ -9,7 +9,6 @@ import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { useAppStore } from '@/store/modules/app'
 import { computed, onMounted } from 'vue'
-import actions from '@/shared/actions'
 
 const locale = zhCn // element-plus 设置为中文
 
@@ -24,11 +23,6 @@ onMounted(() => {
       sessionStorage.setItem('visitedViews', JSON.stringify([]))
     }
   }
-  actions.onGlobalStateChange(
-    (state: any, prevState: any) => {
-      console.log(prevState, state, 'xxxx')
-    }
-  )
 })
 
 useAppStore().initTheme() // 初始化 Theme

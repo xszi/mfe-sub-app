@@ -1,3 +1,7 @@
+// todo
+// 需要再熟悉ES6的class类
+// 理解ES6的Reflect
+// 什么是访问器属性
 function emptyAction() {
   // 警告：提示当前使用的是空 Action
   console.warn('Current execute action is empty!111')

@@ -2,7 +2,7 @@
   <div class="tags-view-container">
     <ScrollPane class="tags-view-wrapper">
       <router-link
-        v-for="tag in visitedViews"
+        v-for="tag in state.visitedViews"
         ref="tag"
         :key="tag.path"
         :class="state.isActive(tag) ? 'active' : ''"
@@ -33,6 +33,7 @@ import { computed, getCurrentInstance, nextTick, onBeforeMount, onUnmounted, rea
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import ScrollPane from './scroll-pane.vue'
 import { Close } from '@element-plus/icons-vue'
+import actions from '@/shared/actions'
 
 const tagsViewStore = useTagsViewStore()
 const permissionStore = usePermissionStore()
@@ -40,7 +41,6 @@ const router = useRouter()
 const instance = getCurrentInstance()
 const currentRoute = useRoute()
 // const { proxy } = instance as any
-let visitedViews: ITagView[] = []
 
 const toLastView = (visitedViews: ITagView[], view: ITagView) => {
   const latestView = visitedViews.slice(-1)[0]
@@ -66,8 +66,8 @@ const toLastView = (visitedViews: ITagView[], view: ITagView) => {
 }
 
 const updateVisitedViews = () => {
-  visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
-  console.log(visitedViews, 'updateVisitedViews')
+  state.visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
+  actions.setGlobalState({ visitedViews: state.visitedViews })
 }
 
 mitter.on('updateVisitedViews', updateVisitedViews)
@@ -82,6 +82,7 @@ const state = reactive({
   left: 0,
   selectedTag: {} as ITagView,
   affixTags: [] as ITagView[],
+  visitedViews: [] as ITagView[],
   isActive: (route: ITagView) => {
     return route.path === currentRoute.path
   },
@@ -97,7 +98,6 @@ const state = reactive({
     })
   },
   closeSelectedTag: (view: ITagView) => {
-    // tagsViewStore.delVisitedView(view)
     delVisitedViewCache(view)
     if (state.isActive(view)) {
       const visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)

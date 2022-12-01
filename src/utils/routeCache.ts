@@ -12,6 +12,11 @@ export interface ITagView extends Partial<RouteLocationNormalized> {
 export const addVisitedViewCache = (view: ITagView) => {
   const visitedViews = JSON.parse(<string>sessionStorage.getItem('visitedViews'))
   if (visitedViews.some((v: any) => v.path === view.path)) return
+  const ISQIANKUN = (window as any).__POWERED_BY_QIANKUN__
+  console.log(ISQIANKUN, 'ISQIANKUN')
+  if (ISQIANKUN) {
+    view.fullPath = `layout/v3-sub-app/#${view.fullPath}`
+  }
   visitedViews.push(
     Object.assign({}, view, {
       title: view.meta?.title || 'no-name'

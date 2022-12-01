@@ -7,11 +7,13 @@ import { usePermissionStoreHook } from '@/store/modules/permission'
 import { ElMessage } from 'element-plus'
 import { whiteList } from '@/config/white-list'
 import rolesSettings from '@/config/roles'
+import { addVisitedViewCache } from '@/utils/routeCache'
 // import { getToken } from '@/utils/cookies'
 
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized, next: any) => {
+  addVisitedViewCache(to)
   NProgress.start()
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
