@@ -1,19 +1,19 @@
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from '@/router'
-import { RouteLocationNormalized } from 'vue-router'
+import { RouteLocationNormalized, RouteRecordName } from 'vue-router'
 import { useUserStoreHook } from '@/store/modules/user'
 import { usePermissionStoreHook } from '@/store/modules/permission'
 import { ElMessage } from 'element-plus'
 import { whiteList } from '@/config/white-list'
 import rolesSettings from '@/config/roles'
-import { addVisitedViewCache } from '@/utils/routeCache'
+import { addVisitedView } from '@/utils/routeCache'
 // import { getToken } from '@/utils/cookies'
 
 NProgress.configure({ showSpinner: false })
+let preRouteName: RouteRecordName | undefined | null = ''
 
 router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized, next: any) => {
-  addVisitedViewCache(to)
   NProgress.start()
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
@@ -60,6 +60,11 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
         }
       } else {
         next()
+      }
+      if (to.name !== preRouteName) {
+        preRouteName = to?.name
+        to.meta.childApp = 'v3-sub-app'
+        addVisitedView(to)
       }
     }
   } else {

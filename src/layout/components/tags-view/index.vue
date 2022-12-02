@@ -12,7 +12,7 @@
       >
         {{ tag.meta?.title }}
         <el-icon
-          v-if="!state.isAffix(tag)"
+          v-if="(!state.isAffix(tag) && state.visitedViews.length > 1)"
           :size="12"
           @click.prevent.stop="state.closeSelectedTag(tag)"
         >
@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import mitter from '@/utils/mittBus'
 import path from 'path'
-import { addVisitedViewCache, delVisitedViewCache } from '@/utils/routeCache'
+import { addVisitedView, delVisitedView } from '@/utils/routeCache'
 import { useTagsViewStore, ITagView } from '@/store/modules/tags-view'
 import { usePermissionStore } from '@/store/modules/permission'
 import { computed, getCurrentInstance, nextTick, onBeforeMount, onUnmounted, reactive, watch } from 'vue'
@@ -44,7 +44,6 @@ const currentRoute = useRoute()
 
 const toLastView = (visitedViews: ITagView[], view: ITagView) => {
   const latestView = visitedViews.slice(-1)[0]
-  console.log(latestView, view, 'latestView')
 
   if (latestView !== undefined && latestView.fullPath !== undefined) {
     router.push(latestView.fullPath).catch((err) => {
@@ -98,17 +97,13 @@ const state = reactive({
     })
   },
   closeSelectedTag: (view: ITagView) => {
-    delVisitedViewCache(view)
+    delVisitedView(view)
     if (state.isActive(view)) {
       const visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
       toLastView(visitedViews, view)
     }
   }
 })
-
-// const visitedViews = computed(() => {
-//   return tagsViewStore.visitedViews
-// })
 
 const routes = computed(() => permissionStore.routes)
 
@@ -141,16 +136,14 @@ const initTags = () => {
   for (const tag of state.affixTags) {
     // 必须含有 name 属性
     if (tag.name) {
-      // tagsViewStore.addVisitedView(tag as ITagView)
-      addVisitedViewCache(tag as ITagView)
+      addVisitedView(tag as ITagView)
     }
   }
 }
 
 const addTags = () => {
   if (currentRoute.name) {
-    // tagsViewStore.addVisitedView(currentRoute)
-    addVisitedViewCache(currentRoute)
+    addVisitedView(currentRoute)
   }
   return false
 }
