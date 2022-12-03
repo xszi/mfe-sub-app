@@ -12,7 +12,7 @@ function track(target, key) {
     deps.add(activeEffect)
     activeEffect.deps.push(deps)
 }
-function trigger(target, key) {
+function trigger(target, key, type) {
     const depsMap = bucket.get(target)
     if (!depsMap) return
     const effects = depsMap.get(key)
@@ -23,6 +23,15 @@ function trigger(target, key) {
             effectsToRun.add(effectFn)
         }
     })
+    // 当操作类型为 ADD 或 DELETE 时，需要触发与 ITERATE_KEY 相关联的副作用函数重新执行
+    if (type === 'ADD' || type === 'DELETE') {
+        const iterateEffects = depsMap.get(ITERATE_KEY)
+        iterateEffects && iterateEffects.forEach(effectFn => {
+            if (effectFn !== activeEffect) {
+                effectsToRun.add(effectFn)
+            }
+        })
+    }
     effectsToRun.forEach(effectFn => {
         if(effectFn.options.scheduler){
             // console.log(999, effectFn.options.scheduler);
