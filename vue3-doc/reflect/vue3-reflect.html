@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript" src="../common.js"></script>
+    <script type="text/javascript">
+        // 解决问题：reflect
+        // const obj = { foo: 1 }
+        // console.log(obj.foo);
+        // console.log(Reflect.get(obj, 'foo'));
+
+
+        // const obj = {
+        //     foo: 1,
+        //     get foo() {
+        //         return this.foo
+        //     }
+        // }
+        // console.log(Reflect.get(obj, 'foo', { foo: 2 }));
+
+        const obj = {
+            foo: 1,
+            get bar() { return this.foo }
+        }
+        const p = new Proxy(obj, {
+            get(target, key, receiver) {
+                track(target, key)
+                // return target[key]
+                return Reflect.get(target, key, receiver)
+            },
+            set(target, key, newVal) {
+                target[key] = newVal
+                track(target, key)
+            }
+        })
+        effect(() => {
+            console.log(p.bar, 'xxx');
+        })
+
+        setTimeout(() => {
+            p.bar++
+        }, 2000)
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>

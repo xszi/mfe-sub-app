@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript">
+        // 解决问题7：函数代理
+        const fn = (name) => {
+            console.log('我是：', name);
+        }
+        const p = new Proxy(fn, {
+            // 使用apply拦截函数调用
+            apply(target, thisArg, argArray) {
+                target.call(thisArg, ...argArray)
+            }
+        })
+
+        fn('行书子')
+        console.log('结束了')
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>

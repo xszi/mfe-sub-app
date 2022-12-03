@@ -63,25 +63,6 @@
             }
             effectFn.deps.length = 0
         }
-        let activeEffect // 只有一个暂存函数，嵌套时会被里层的副作用函数覆盖掉, 这时只暂存一个激活的副作用函数
-        const effectStack = []
-        function effect(fn, options = {}) {
-            const effectFn = () => {
-                cleanup(effectFn)
-                activeEffect = effectFn
-                effectStack.push(effectFn)
-                const res = fn()
-                effectStack.pop()
-                activeEffect = effectStack[effectStack.length - 1]
-                return res
-            }
-            effectFn.options = options // 调度函数
-            effectFn.deps = []
-            if (!options.lazy) {
-                effectFn()
-            }
-            return effectFn
-        }
 
         function watch(source, cb) {
             let getter
