@@ -33,9 +33,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/dashboard/index.vue'),
         name: 'Dashboard',
         meta: {
-          title: '首页',
-          icon: 'dashboard',
-          affix: true
+          title: '子应用',
+          icon: 'dashboard'
+          // affix: true
         }
       }
     ]
@@ -51,6 +51,22 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         name: 'Monitor',
         meta: {
           title: '监控',
+          icon: 'bug'
+        }
+      }
+    ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/test/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/permission/page.vue'),
+        name: 'Test',
+        meta: {
+          title: '测试',
           icon: 'bug'
         }
       }
@@ -91,35 +107,6 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
         name: 'DirectivePermission',
         meta: {
           title: '指令权限' // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
-        }
-      }
-    ]
-  },
-  {
-    path: '/:pathMatch(.*)*', // 必须将 'ErrorPage' 路由放在最后, Must put the 'ErrorPage' route at the end
-    component: Layout,
-    redirect: '/404',
-    name: 'ErrorPage',
-    meta: {
-      title: '错误页面',
-      icon: '404',
-      hidden: true
-    },
-    children: [
-      {
-        path: '401',
-        component: () => import('@/views/error-page/401.vue'),
-        name: '401',
-        meta: {
-          title: '401'
-        }
-      },
-      {
-        path: '404',
-        component: () => import('@/views/error-page/404.vue'),
-        name: '404',
-        meta: {
-          title: '404'
         }
       }
     ]

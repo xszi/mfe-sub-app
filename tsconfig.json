@@ -33,7 +33,8 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/shared/actions.ts"
   ],
   "exclude": [
     "node_modules"

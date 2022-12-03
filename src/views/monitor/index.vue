@@ -42,12 +42,14 @@
 <script lang='ts' setup>
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
+import actions from '@/shared/actions'
 // import IframeBreadcurmb from './components/iframe-breadcurmb.vue'
 
 const count = ref(0)
 
 const add = () => {
   count.value++
+  actions.setGlobalState({ value: 5 })
 }
 
 const sub = () => {

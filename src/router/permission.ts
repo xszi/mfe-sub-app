@@ -7,6 +7,7 @@ import { usePermissionStoreHook } from '@/store/modules/permission'
 import { ElMessage } from 'element-plus'
 import { whiteList } from '@/config/white-list'
 import rolesSettings from '@/config/roles'
+import { addVisitedView } from '@/utils/routeCache'
 // import { getToken } from '@/utils/cookies'
 
 NProgress.configure({ showSpinner: false })
@@ -58,6 +59,12 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
         }
       } else {
         next()
+      }
+      const visitedViews = JSON.parse(sessionStorage.getItem('visitedViews') as string)
+      const visitedNames = visitedViews.map((item: any) => item.name)
+      if (!visitedNames.includes(to.name)) {
+        to.meta.childApp = 'v3-sub-app'
+        addVisitedView(to)
       }
     }
   } else {

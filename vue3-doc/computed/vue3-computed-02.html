@@ -10,7 +10,7 @@
 </head>
 <body>
     <script type="text/javascript">
-        // 解决问题7：computed
+        // 解决问题7：computed 之缓存
         const bucket = new WeakMap()
         let data = { foo: 1, bar: 2}
         const obj = new Proxy(data, {
