@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>
+    vue3代码
+  </title>
+</head>
+<body>
+    <script type="text/javascript" src="../common.js"></script>
+    <script type="text/javascript">
+        function readOnly(obj) {
+            return reactive(obj, false, true);
+        }
+        function reactive(obj, isShallow = false, isReadOnly = fale) {
+            return new Proxy(obj, {
+                get(target, key, receiver) {
+                    // 代理对象可以通过raw属性访问原始数据
+                    if (key === 'raw') {
+                        return target
+                    }
+                    
+                    if (!isReadOnly) {
+                        track(target, key)
+                    }
+
+                    const res = Reflect.get(target, key, receiver)
+                    
+                    if (isShallow) {
+                        return res
+                    }
+
+                    if (typeof res === 'object' && res !== null) {
+                        // 深响应 深只读
+                        // return isReadOnly ? readOnly(res) : reactive(res)
+                        return reactive(res, isShallow, isReadOnly); // 这样用可以吗？？？
+                    }
+                    return res
+                },
+                set(target, key, newVal, receiver) {
+                    if (isReadOnly) {
+                        console.warn(`属性 ${key} 是只读的`);
+                        return true;
+                    }
+                    const oldVal = target[key]
+                    const type = Object.prototype.hasOwnProperty.call(target, key) ? 'SET' : 'ADD'
+                    const res = Reflect.set(target, key, newVal, receiver)
+                    // target === receiver.raw 说明 receiver 就是 target 的代理对象
+                    if (target === receiver.raw) {
+                        if(oldVal !== newVal && (oldVal === oldVal || newVal === newVal)) {
+                            trigger(target, key, type)
+                        }
+                    }
+                    return res
+                },
+                deleteProperty(target, key) {
+                    if (isReadOnly) {
+                        console.warn(`属性 ${key} 是只读的`);
+                        return true;
+                    }
+                    const hadKey = Object.prototype.hasOwnProperty.call(target, key)
+                    const res = Reflect.deleteProperty(target, key)
+                    if (res && hadKey) {
+                        trigger(target, key, 'DELETE')
+                    }
+                    return res;
+                }
+            });
+        }
+        
+        const obj = reactive({ foo: { bar: 1} }, false)
+
+        effect(() => {
+            console.log(obj.foo.bar)
+        })
+
+        setTimeout(() => {
+            obj.foo.bar = 2
+        }, 2000)
+        
+    </script>
+  <div id="sub-app"></div>
+</body>
+</html>
