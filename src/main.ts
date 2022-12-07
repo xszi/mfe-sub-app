@@ -35,6 +35,7 @@ function render(props?: any) {
     // 注入 actions 实例
     container = props.container
     instance.config.globalProperties.$parRouter = props.parRouter
+    sessionStorage.setItem('sign_frame_token', props.token)
     instance.config.globalProperties.$eventbus = mitt()
     // const { proxy } = getCurrentInstance();
   }
