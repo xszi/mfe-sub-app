@@ -11,6 +11,9 @@
       <el-button @click="sub">
         Count 减 -
       </el-button>
+      <el-button @click="jump">
+        跨应用跳转到JAY
+      </el-button>
     </el-card>
     <el-card shadow="never">
       <el-button type="danger" @click="onUnhandledrejection">
@@ -41,8 +44,9 @@
 
 <script lang='ts' setup>
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import actions from '@/shared/actions'
+const { proxy } = getCurrentInstance()
 // import IframeBreadcurmb from './components/iframe-breadcurmb.vue'
 
 const count = ref(0)
@@ -54,6 +58,11 @@ const add = () => {
 
 const sub = () => {
   count.value--
+}
+
+const jump = () => {
+  proxy.$parRouter.push({ path: '/layout/v2-sub-app/nginx-prefix/nginx/desc' })
+  // proxy.$parRouter.push({ path: '/home' })
 }
 
 const onUnhandledrejection = () => {
