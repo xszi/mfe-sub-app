@@ -31,9 +31,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index.vue'),
-        name: 'Dashboard',
+        name: 'LightSong',
         meta: {
-          title: '子应用',
+          title: '夜曲',
           icon: 'dashboard'
           // affix: true
         }
@@ -48,9 +48,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: 'index',
         component: () => import('@/views/monitor/index.vue'),
-        name: 'Monitor',
+        name: 'North',
         meta: {
-          title: '监控',
+          title: '一路向北',
           icon: 'bug'
         }
       }
@@ -64,9 +64,9 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       {
         path: 'index',
         component: () => import('@/views/permission/page.vue'),
-        name: 'Test',
+        name: 'Drift',
         meta: {
-          title: '测试',
+          title: '漂移',
           icon: 'bug'
         }
       }
