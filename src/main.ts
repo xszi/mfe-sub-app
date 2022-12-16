@@ -1,26 +1,29 @@
 import './public-path.ts'
 import { createApp, Directive } from 'vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import mitt from 'mitt'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import App from './App.vue'
 import store from './store'
-import router from './router'
+import { constantRoutes } from './router'
 // import { loadAllPlugins } from './plugins'
 import '@/styles/index.scss'
 import 'normalize.css'
 import * as directives from '@/directives'
-import '@/router/permission'
 import loadSvg from '@/icons'
 import actions from '@/shared/actions'
 
-// let router: any = null
+let router: any = null
 let instance: any = null
 
 function render(props?: any) {
   instance = createApp(App)
-
+  router = createRouter({
+    history: createWebHashHistory(),
+    routes: constantRoutes
+  })
   actions.setActions(props)
   // // 加载所有插件
   // loadAllPlugins(instance)
@@ -67,5 +70,5 @@ export async function mount(props: any) {
 export async function unmount() {
   instance.unmount()
   instance = null
-  // router = null
+  router = null
 }

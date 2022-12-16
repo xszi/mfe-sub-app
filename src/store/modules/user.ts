@@ -1,10 +1,7 @@
 import store from '@/store'
 import { defineStore } from 'pinia'
-import { usePermissionStore } from './permission'
 import { getToken, removeToken, setToken } from '@/utils/cookies'
-import router, { resetRouter } from '@/router'
 import { accountLogin } from '@/api/login'
-import { RouteRecordRaw } from 'vue-router'
 
 interface IUserState {
   token: string
@@ -74,19 +71,13 @@ export const useUserStore = defineStore({
       this.token = token
       setToken(token)
       await this.getInfo()
-      const permissionStore = usePermissionStore()
-      permissionStore.setRoutes(this.roles)
-      resetRouter()
-      permissionStore.dynamicRoutes.forEach((item: RouteRecordRaw) => {
-        router.addRoute(item)
-      })
     },
     /** 登出 */
     logout() {
       removeToken()
       this.token = ''
       this.roles = []
-      resetRouter()
+      // resetRouter()
     },
     /** 重置 token */
     resetToken() {

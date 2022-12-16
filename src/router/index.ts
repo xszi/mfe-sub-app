@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 const Layout = () => import('@/layout/index.vue')
 
 /** 常驻路由 */
@@ -23,13 +23,16 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       hidden: true
     }
   },
+  // {
+  //   path: '/',
+  //   redirect: '/dashboard/index'
+  // },
   {
-    path: '/',
+    path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard',
     children: [
       {
-        path: 'dashboard',
+        path: 'index',
         component: () => import('@/views/dashboard/index.vue'),
         name: 'LightSong',
         meta: {
@@ -43,7 +46,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: '/monitor',
     component: Layout,
-    redirect: '/monitor/index',
     children: [
       {
         path: 'index',
@@ -59,7 +61,6 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: '/test',
     component: Layout,
-    redirect: '/test/index',
     children: [
       {
         path: 'index',
@@ -113,25 +114,25 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
   }
 ]
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes: constantRoutes
-})
+// const router = createRouter({
+//   history: createWebHashHistory(),
+//   routes: constantRoutes
+// })
 
 /** 重置路由 */
-export function resetRouter() {
-  // 注意：所有动态路由路由必须带有 name 属性，否则可能会不能完全重置干净
-  try {
-    router.getRoutes().forEach((route) => {
-      const { name, meta } = route
-      if (name && meta.roles?.length) {
-        router.hasRoute(name) && router.removeRoute(name)
-      }
-    })
-  } catch (error) {
-    // 强制刷新浏览器，不过体验不是很好
-    window.location.reload()
-  }
-}
+// export function resetRouter() {
+//   // 注意：所有动态路由路由必须带有 name 属性，否则可能会不能完全重置干净
+//   try {
+//     router.getRoutes().forEach((route) => {
+//       const { name, meta } = route
+//       if (name && meta.roles?.length) {
+//         router.hasRoute(name) && router.removeRoute(name)
+//       }
+//     })
+//   } catch (error) {
+//     // 强制刷新浏览器，不过体验不是很好
+//     window.location.reload()
+//   }
+// }
 
-export default router
+// export default router

@@ -10,8 +10,8 @@
     <div :class="{hasTagsView: showTagsView}" class="main-container" :style="ISQIANKUN ? {'margin-left': 0} : {}">
       <div v-if="!ISQIANKUN" :class="{'fixed-header': fixedHeader}">
         <NavigationBar />
-        <TagsView v-if="showTagsView" />
       </div>
+      <TagsView v-if="showTagsView" />
       <AppMain />
     </div>
   </div>

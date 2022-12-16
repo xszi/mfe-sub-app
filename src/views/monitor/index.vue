@@ -8,6 +8,7 @@
       <el-button type="primary" @click="add">
         Count 加 +
       </el-button>
+      <el-input v-model="value" placeholder="请输入数字" />
       <el-button @click="sub">
         Count 减 -
       </el-button>
@@ -50,6 +51,7 @@ const { proxy } = getCurrentInstance()
 // import IframeBreadcurmb from './components/iframe-breadcurmb.vue'
 
 const count = ref(0)
+const value = ref('')
 
 const add = () => {
   count.value++

@@ -1,5 +1,5 @@
 <template>
-  <div class="tags-view-container">
+  <div class="tags-view-container" :class="{'dispaly-none': ISQIANKUN}">
     <ScrollPane class="tags-view-wrapper">
       <router-link
         v-for="tag in state.visitedViews"
@@ -28,15 +28,14 @@ import mitter from '@/utils/mittBus'
 import path from 'path'
 import { addVisitedView, delVisitedView } from '@/utils/routeCache'
 import { useTagsViewStore, ITagView } from '@/store/modules/tags-view'
-import { usePermissionStore } from '@/store/modules/permission'
-import { computed, getCurrentInstance, nextTick, onBeforeMount, onUnmounted, reactive, watch } from 'vue'
+import { constantRoutes } from '@/router'
+import { getCurrentInstance, nextTick, onBeforeMount, onUnmounted, reactive, watch, computed } from 'vue'
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import ScrollPane from './scroll-pane.vue'
 import { Close } from '@element-plus/icons-vue'
 import actions from '@/shared/actions'
 
 const tagsViewStore = useTagsViewStore()
-const permissionStore = usePermissionStore()
 const router = useRouter()
 const instance = getCurrentInstance()
 const currentRoute = useRoute()
@@ -105,7 +104,7 @@ const state = reactive({
   }
 })
 
-const routes = computed(() => permissionStore.routes)
+const routes = constantRoutes
 
 const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
   let tags: ITagView[] = []
@@ -132,7 +131,7 @@ const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
 }
 
 const initTags = () => {
-  state.affixTags = filterAffixTags(routes.value)
+  state.affixTags = filterAffixTags(routes)
   for (const tag of state.affixTags) {
     // 必须含有 name 属性
     if (tag.name) {
@@ -147,6 +146,10 @@ const addTags = () => {
   }
   return false
 }
+
+const ISQIANKUN = computed(() => {
+  return (window as any).__POWERED_BY_QIANKUN__
+})
 
 const moveToCurrentTag = () => {
   const tags = instance?.refs.tag as any[]
@@ -180,6 +183,9 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss" scoped>
+.dispaly-none {
+  display: none;
+}
 .tags-view-container {
   height: 34px;
   width: 100%;
