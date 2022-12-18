@@ -27,7 +27,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
-import { usePermissionStore } from '@/store/modules/permission'
+import { constantRoutes } from '@/router'
 import { useSettingsStore } from '@/store/modules/settings'
 import SidebarItem from './sidebar-item.vue'
 import SidebarLogo from './sidebar-logo.vue'
@@ -37,7 +37,7 @@ const sidebar = computed(() => {
   return useAppStore().sidebar
 })
 const routes = computed(() => {
-  return usePermissionStore().routes
+  return constantRoutes
 })
 
 const showLogo = computed(() => {

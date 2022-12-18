@@ -9,11 +9,20 @@ export interface ITagView extends Partial<RouteLocationNormalized> {
 export const addVisitedView = (view: ITagView) => {
   const visitedViews = JSON.parse(<string>sessionStorage.getItem('visitedViews'))
   if (visitedViews.some((v: any) => v.path === view.path)) return
-  visitedViews.push(
-    Object.assign({}, view, {
-      title: view.meta?.title || 'no-name'
-    })
-  )
+  const handleView = {
+    name: view.name,
+    path: view.path,
+    query: view.query,
+    params: view.params,
+    fullPath: view.fullPath,
+    meta: {
+      mode: 'hash',
+      childApp: 'v3-sub-app',
+      noCache: view.meta?.noCache,
+      title: view.meta?.title
+    }
+  }
+  visitedViews.push(handleView)
   sessionStorage.setItem('visitedViews', JSON.stringify(visitedViews))
   emitter.emit('updateVisitedViews')
   actions.setGlobalState({ visitedViews }, { childApp: 'v3-sub-app' })
