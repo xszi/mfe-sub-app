@@ -8,13 +8,15 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import App from './App.vue'
 import store from './store'
 import { constantRoutes } from './router'
+
 // import { loadAllPlugins } from './plugins'
 import '@/styles/index.scss'
 import 'normalize.css'
 import * as directives from '@/directives'
 import loadSvg from '@/icons'
 import actions from '@/shared/actions'
-
+// import { useAppStore } from '@/store/modules/app'
+// const appStore = useAppStore()
 let router: any = null
 let instance: any = null
 
@@ -67,7 +69,33 @@ export async function mount(props: any) {
   render(props)
 }
 
+export async function update(props: any) {
+  // console.log('update props', props);
+  const {
+    routerEvent
+  } = props
+  if (routerEvent) {
+    switch (routerEvent.type) {
+      case 'push':
+        router.push(routerEvent.fullPath)
+        // const constantRoutesName = constantRoutes.find((item: any) => item.path === routerEvent.path)['name']
+        // appStore.pushKeepAliveList(constantRoutesName)
+        break
+      case 'replace':
+        router.replace(routerEvent.fullPath)
+        break
+      case 'close':
+        // store.commit('CLOSE_KEEPALIVE_LIST', constantRoutes.find((item: any) => item.path === routerEvent.path))
+        break
+      case 'visible':
+        router.push('/empty')
+        break
+    }
+  }
+}
+
 export async function unmount() {
+  // console.warn(99998888)
   instance.unmount()
   instance = null
   router = null

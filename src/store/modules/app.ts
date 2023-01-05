@@ -22,6 +22,7 @@ interface IAppState {
   themeList: { title: string, name: string }[]
   /** 正在应用的主题的名字 */
   activeThemeName: string
+  keepAliveList: Array<any>
 }
 
 export const useAppStore = defineStore({
@@ -34,10 +35,16 @@ export const useAppStore = defineStore({
         withoutAnimation: false
       },
       themeList: themeList,
-      activeThemeName: getActiveThemeName() || 'normal'
+      activeThemeName: getActiveThemeName() || 'normal',
+      keepAliveList: []
     }
   },
   actions: {
+    pushKeepAliveList(data: any) {
+      if (!this.keepAliveList.some((item: any) => item === data)) {
+        this.keepAliveList.push(data)
+      }
+    },
     toggleSidebar(withoutAnimation: boolean) {
       this.sidebar.opened = !this.sidebar.opened
       this.sidebar.withoutAnimation = withoutAnimation

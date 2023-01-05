@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,6 +79,7 @@
             effectFn()
         }
         const jobQueue = new Set()
+        // 创建一个微任务
         const p = Promise.resolve()
 
         let isFlushing = false
